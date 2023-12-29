@@ -1,0 +1,72 @@
+{% include 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="p-5 mb-4 bg-body-tertiary rounded-3">
+      <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">{{ post.title }}</h1>
+        <p class="col-md-8 fs-4">{{ post.subtitle }}</p>
+        {% if current_user.id == 1 %}
+        <a href="{{ url_for('edit', post_id=post.id) }}" class="btn btn-primary my-2">Edit Post</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row align-items-md-stretch">
+      <div class="col-md-6">
+        <div class="h-100 p-5 bg-body-tertiary rounded-3">
+          <div class="modal fade" id="exampleModalLong" tabindex="-1" aria-labelledby="exampleModalLongTitle" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content" style="width: 700px">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLongTitle">{{ post.title }}</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="min-height: 900px">
+                  <p>{{ post.body1|safe }}</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bd-example">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalLong">
+                Summery
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="h-100 p-5 bg-body-tertiary rounded-3">
+          <div class="modal fade" id="exampleModalScrollable" tabindex="-1" aria-labelledby="exampleModalScrollableTitle" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+              <div class="modal-content" style="width: 700px">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalScrollableTitle">{{ post.title }}</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="min-height: 1500px">
+                  <p>{{ post.body2|safe }}</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bd-example">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalScrollable" fdprocessedid="wd55qo">
+              Cast
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="pt-3 mt-4 text-body-secondary border-top">
+      © 2023
+    </footer>
+  </div>
+{% endblock %}
