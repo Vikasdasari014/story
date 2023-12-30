@@ -24,7 +24,7 @@ login_manger.init_app(app)
 
 @login_manger.user_loader
 def load_user(user_id):
-    return db.get_or_404(User, user_id)
+    return db.get_or_404(MovieUser, user_id)
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", "sqlite:///data.db")
@@ -32,8 +32,8 @@ db = SQLAlchemy()
 db.init_app(app)
 
 
-class BlogPost(db.Model):
-    __tablename__ = "blog_posts"
+class MoviePost(db.Model):
+    __tablename__ = "movie_posts"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
@@ -42,8 +42,8 @@ class BlogPost(db.Model):
     body2 = db.Column(db.Text, nullable=False)
 
 
-class User(UserMixin, db.Model):
-    __tablename__ = "users"
+class MovieUser(UserMixin, db.Model):
+    __tablename__ = "m_users"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
@@ -64,7 +64,7 @@ def admin_only(f):
 
 @app.route("/")
 def home():
-    result = db.session.execute(db.select(BlogPost))
+    result = db.session.execute(db.select(MoviePost))
     posts = result.scalars().all()
     return render_template("index.html", posts=posts, current_user=current_user)
 
@@ -74,7 +74,7 @@ def home():
 def add_post():
     form = CreatePostForm()
     if form.validate_on_submit():
-        new_post = BlogPost(
+        new_post = MoviePost(
             title=form.title.data,
             subtitle=form.subtitle.data,
             img=form.image.data,
@@ -89,7 +89,7 @@ def add_post():
 
 @app.route("/post/<int:post_id>")
 def post(post_id):
-    required_post = db.get_or_404(BlogPost, post_id)
+    required_post = db.get_or_404(MoviePost, post_id)
     return render_template("post.html", post=required_post, current_user=current_user)
 
 
@@ -97,7 +97,7 @@ def post(post_id):
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = db.session.execute(db.Select(User).where(User.email == form.email.data)).scalar()
+        user = db.session.execute(db.Select(MovieUser).where(MovieUser.email == form.email.data)).scalar()
         if user:
             flash("This email already in use, Login instead.")
             return redirect(url_for('login'))
@@ -107,7 +107,7 @@ def register():
                 method='pbkdf2:sha256',
                 salt_length=8
             )
-            new_user = User(
+            new_user = MovieUser(
                 email=form.email.data,
                 password=hash_and_salted_password,
                 name=form.name.data
@@ -123,7 +123,7 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = db.session.execute(db.Select(User).where(User.email == form.email.data)).scalar()
+        user = db.session.execute(db.Select(MovieUser).where(MovieUser.email == form.email.data)).scalar()
         if not user:
             flash("This email does not exist, Please try again.")
             return redirect(url_for('login'))
@@ -139,7 +139,7 @@ def login():
 @app.route("/edit/<int:post_id>", methods=["GET", "POST"])
 @admin_only
 def edit(post_id):
-    post = db.get_or_404(BlogPost, post_id)
+    post = db.get_or_404(MoviePost, post_id)
     form = CreatePostForm(
         title=post.title,
         subtitle=post.subtitle,
@@ -161,7 +161,7 @@ def edit(post_id):
 @app.route("/delete/<int:post_id>")
 @admin_only
 def delete(post_id):
-    post_delete = db.get_or_404(BlogPost, post_id)
+    post_delete = db.get_or_404(MoviePost, post_id)
     db.session.delete(post_delete)
     db.session.commit()
     return redirect(url_for('home'))
